@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage("Install dependencies") {
             steps {
-                sh "apt install python3-pip"
+                sh "sudo apt install python3-pip"
                 sh "pip3 install -r requirements.txt"
                 echo "Dependencies installed successfully"
             }
