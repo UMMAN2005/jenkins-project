@@ -30,6 +30,8 @@ pipeline {
                                 withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
                                                  usernameVariable: 'DOCKER_USERNAME', 
                                                  passwordVariable: 'DOCKER_PASSWORD')]) {
+                echo "username: ${env.DOCKER_USERNAME}"
+                echo "password: ${env.DOCKER_PASSWORD}"
                 sh "echo ${env.DOCKER_PASSWORD} | docker login -u ${env.DOCKER_USERNAME} --password-stdin"
                 echo "Logged in successfully"
                                                  }
