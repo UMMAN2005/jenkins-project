@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_USERNAME = credentials("docker-username")
-        DOCKER_PASSWORD = credentials("docker-password")
-    }
-
     stages {
         stage("Install dependencies") {
             steps {
@@ -30,8 +25,12 @@ pipeline {
 
         stage("Login to Dockerhub") {
             steps {
+                                withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
+                                                 usernameVariable: 'DOCKER_USERNAME', 
+                                                 passwordVariable: 'DOCKER_PASSWORD')]) {
                 sh "echo ${env.DOCKER_PASSWORD} | docker login -u ${env.DOCKER_USERNAME} --password-stdin"
                 echo "Logged in successfully"
+                                                 }
             }
         }
 
