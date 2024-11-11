@@ -12,6 +12,7 @@ pipeline {
 
         stage("Test") {
             steps {
+                sh "sudoapt install python3-pytest -y"
                 sh "pytest"
                 echo "Test run successfully"
             }
