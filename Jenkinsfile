@@ -29,7 +29,7 @@ pipeline {
 
         stage("Build docker image") {
             steps {
-                sh "sudo docker build -t docker.io/umman2005/jenkins-project:${env.GIT_COMMIT} ."
+                sh "sudo docker build -t umman2005/jenkins-project:${env.GIT_COMMIT} ."
                 echo "Image built successfully"
             }
         }
@@ -39,7 +39,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
                                                  usernameVariable: 'DOCKER_USERNAME', 
                                                  passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh "echo ${env.DOCKER_PASSWORD} | docker login -u ${env.DOCKER_USERNAME} --password-stdin docker.io"
+                    sh "echo ${env.DOCKER_PASSWORD} | docker login -u ${env.DOCKER_USERNAME} --password-stdin"
                     echo "Logged in successfully"
                 }
             }
@@ -47,7 +47,7 @@ pipeline {
 
         stage("Push to Dockerhub") {
             steps {
-                sh "sudo docker push docker.io/umman2005/jenkins-project:${env.GIT_COMMIT}"
+                sh "sudo docker push umman2005/jenkins-project:${env.GIT_COMMIT}"
                 echo "Image pushed to DockerHub successfully"
             }
         }
