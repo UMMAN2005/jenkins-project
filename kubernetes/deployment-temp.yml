@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ${POD}
+      app: ${DEPLOYMENT}
   template:
     metadata:
       labels:
-        app: ${POD}
+        app: ${DEPLOYMENT}
     spec:
       containers:
       - name: ${CONTAINER}

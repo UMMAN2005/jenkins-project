@@ -6,9 +6,8 @@ pipeline {
         ZONE = 'us-central1'
         PROJECT_ID = 'kubernetes-441414'
         NAMESPACE = 'default'
-        DEPLOYMENT = 'jenkins-project-deployment'
-        POD = 'jenkins-project-pod'
-        CONTAINER = 'jenkins-project'
+        DEPLOYMENT = 'jenkins-project'
+        CONTAINER = 'jenkins-project-container'
         IMAGE = 'umman2005/jenkins-project'
         TAG = "${env.GIT_COMMIT}"
     }
