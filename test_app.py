@@ -14,7 +14,6 @@ def test_index(app, client):
     assert response.status_code == 200
 
 def test_add_task(client):
-    # The form data name might differ; adjust 'task_content' as needed
     response = client.post('/', data={'task_content': 'New Task', 'add_task': True})
     assert response.status_code == 200
     assert 'New Task' in tasks.values()
