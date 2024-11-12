@@ -5,11 +5,12 @@ pipeline {
         PATH = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/google-cloud-sdk/bin'
         ZONE = 'us-central1'
         PROJECT_ID = 'kubernetes-441414'
-        HARBOR_DOMAIN = '34.42.194.195'
+        HARBOR_DOMAIN = 'http://34.42.194.195'
+        HARBOR_PROJECT = 'jenkins'
         NAMESPACE = 'default'
         DEPLOYMENT = 'jenkins-project'
         CONTAINER = 'jenkins-project-container'
-        IMAGE = "${env.HARBOR_DOMAIN}/jenkins/jenkins-project"
+        IMAGE = 'umman2005/jenkins-project'
         TAG = "${env.GIT_COMMIT}"
     }
 
@@ -43,21 +44,21 @@ pipeline {
             }
         }
 
-        stage("Login to Harbor") {
+        stage("Login to Dockerhub") {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'harbor-credentials', 
-                                                 usernameVariable: 'HARBOR_USERNAME', 
-                                                 passwordVariable: 'HARBOR_PASSWORD')]) {
-                    sh "echo ${env.HARBOR_PASSWORD} | docker login -u ${env.HARBOR_USERNAME} --password-stdin ${env.HARBOR_DOMAIN}"
+                withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
+                                                 usernameVariable: 'DOCKER_USERNAME', 
+                                                 passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh "echo ${env.DOCKER_PASSWORD} | docker login -u ${env.DOCKER_USERNAME} --password-stdin"
                     echo "Logged in successfully"
                 }
             }
         }
 
-        stage("Push to Harbor") {
+        stage("Push to Dockerhub") {
             steps {
                 sh "sudo docker push ${env.IMAGE}:${env.TAG}"
-                echo "Image pushed to Harbor successfully"
+                echo "Image pushed to DockerHub successfully"
             }
         }
 
@@ -70,10 +71,10 @@ pipeline {
                     
                     envsubst < kubernetes/deployment-temp.yml > kubernetes/deployment.yml
 
-                    kubectl delete deployment "${env.DEPLOYMENT}" -n "${env.NAMESPACE}" --ignore-not-found
+                    kubectl delete deployment "${env.DEPLOYMENT}" --ignore-not-found
 
-                    kubectl apply -f kubernetes/deployment.yml -n "${env.NAMESPACE}"
-                    kubectl apply -f kubernetes/service.yml -n "${env.NAMESPACE}"
+                    kubectl apply -f kubernetes/deployment.yml
+                    kubectl apply -f kubernetes/service.yml
                     """
                     echo "Deployed to Dev Cluster successfully"
                 }
@@ -95,6 +96,7 @@ pipeline {
             }
         }
 
+
         stage("Deploy to Prod Cluster") {
             when {
                 expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
@@ -107,10 +109,10 @@ pipeline {
 
                     envsubst < kubernetes/deployment-temp.yml > kubernetes/deployment.yml
 
-                    kubectl delete deployment "${env.DEPLOYMENT}" -n "${env.NAMESPACE}" --ignore-not-found
+                    kubectl delete deployment "${env.DEPLOYMENT}" --ignore-not-found
 
-                    kubectl apply -f kubernetes/deployment.yml -n "${env.NAMESPACE}"
-                    kubectl apply -f kubernetes/service.yml -n "${env.NAMESPACE}"
+                    kubectl apply -f kubernetes/deployment.yml
+                    kubectl apply -f kubernetes/service.yml
                     """
                     echo "Deployed to Prod Cluster successfully"
                 }
