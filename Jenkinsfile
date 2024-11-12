@@ -78,5 +78,43 @@ pipeline {
                 }
             }
         }
+
+        stage("K6 Performance Test") {
+            steps {
+                script {
+                    try {
+                        sh """
+                        k6 run test.js --out json=k6-results.json
+                        """
+                        echo "K6 performance test completed successfully"
+                    } catch (Exception e) {
+                        error("K6 test failed, stopping the pipeline.")
+                    }
+                }
+            }
+        }
+
+
+        stage("Deploy to Prod Cluster") {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    sh """
+                    gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
+                    gcloud container clusters get-credentials prod-cluster --zone "${env.ZONE}" --project "${env.PROJECT_ID}"
+
+                    envsubst < kubernetes/deployment-temp.yml > kubernetes/deployment.yml
+
+                    kubectl delete deployment "${env.DEPLOYMENT}"
+
+                    kubectl apply -f kubernetes/deployment.yml
+                    kubectl apply -f kubernetes/service.yml
+                    """
+                    echo "Deployed to Prod Cluster successfully"
+                }
+            }
+        }
     }
 }
