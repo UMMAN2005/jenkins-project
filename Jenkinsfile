@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage("Install dependencies") {
             steps {
-                sh "sudo apt install python3-pip -y"
+                sh "sudo yum install python3-pip -y"
                 sh "pip3 install -r requirements.txt"
                 echo "Dependencies installed successfully"
             }
@@ -21,7 +21,8 @@ pipeline {
 
         stage("Test") {
             steps {
-                sh "sudo apt install python3-pytest -y"
+                // Install pytest on RHEL using yum
+                sh "sudo yum install python3-pytest -y"
                 sh "python3 -m pytest"
                 echo "Test run successfully"
             }
@@ -29,6 +30,7 @@ pipeline {
 
         stage("Build docker image") {
             steps {
+                // Build the Docker image
                 sh "sudo docker build -t umman2005/jenkins-project:${env.GIT_COMMIT} ."
                 echo "Image built successfully"
             }
@@ -36,17 +38,19 @@ pipeline {
 
         stage("Login to Dockerhub") {
             steps {
-                                withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
+                // Login to Docker Hub using credentials
+                withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
                                                  usernameVariable: 'DOCKER_USERNAME', 
                                                  passwordVariable: 'DOCKER_PASSWORD')]) {
-                sh "echo ${env.DOCKER_PASSWORD} | docker login -u ${env.DOCKER_USERNAME} --password-stdin"
-                echo "Logged in successfully"
-                                                 }
+                    sh "echo ${env.DOCKER_PASSWORD} | docker login -u ${env.DOCKER_USERNAME} --password-stdin"
+                    echo "Logged in successfully"
+                }
             }
         }
 
         stage("Push to Dockerhub") {
             steps {
+                // Push the image to Docker Hub
                 sh "sudo docker push umman2005/jenkins-project:${env.GIT_COMMIT}"
                 echo "Image pushed to DockerHub successfully"
             }
@@ -54,6 +58,7 @@ pipeline {
 
         stage("Deploy to Dev Cluster") {
             steps {
+                // Deploy to GCP Kubernetes cluster
                 withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                     sh """
                     gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
