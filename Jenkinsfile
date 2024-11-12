@@ -5,7 +5,7 @@ pipeline {
         PATH = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/google-cloud-sdk/bin'
         ZONE = 'us-central1'
         PROJECT_ID = 'kubernetes-441414'
-        HARBOR_DOMAIN = 'http://34.42.194.195'
+        HARBOR_DOMAIN = 'http://34.42.194.195:80'
         NAMESPACE = 'default'
         DEPLOYMENT = 'jenkins-project'
         CONTAINER = 'jenkins-project-container'
