@@ -66,7 +66,7 @@ pipeline {
                     kubectl apply -f kubernetes/deployment.yml
                     kubectl apply -f kubernetes/service.yml
                     '''
-                    echo "Deployed to Dev Cluster successfully"
+                    echo "Deployed to Development Cluster successfully"
                 }
             }
         }
