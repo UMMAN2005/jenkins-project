@@ -19,7 +19,6 @@ def test_add_task(client):
     assert 'New Task' in tasks.values()
 
 def test_delete_task(client):
-    # Add a task first
     client.post('/', data={'task_content': 'Task to Delete', 'add_task': True})
     task_id_to_delete = list(tasks.keys())[0]
     response = client.post('/', data={'task_id_to_delete': task_id_to_delete, 'delete_task': True})
