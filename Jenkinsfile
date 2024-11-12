@@ -5,10 +5,12 @@ pipeline {
         PATH = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/google-cloud-sdk/bin'
         ZONE = 'us-central1'
         PROJECT_ID = 'kubernetes-441414'
-        DEPLOYMENT = 'jenkins-project-deployment'
-        CONTAINER = 'jenkins-project'
-        IMAGE = 'jenkins-project'
         NAMESPACE = 'default'
+        DEPLOYMENT = 'jenkins-project-deployment'
+        POD = 'jenkins-project-pod'
+        CONTAINER = 'jenkins-project'
+        IMAGE = 'umman2005/jenkins-project'
+        TAG = "${env.GIT_COMMIT}"
     }
 
     stages {
@@ -36,7 +38,7 @@ pipeline {
 
         stage("Build docker image") {
             steps {
-                sh "sudo docker build -t umman2005/jenkins-project:${env.GIT_COMMIT} ."
+                sh "sudo docker build -t ${env.IMAGE}:${env.TAG} ."
                 echo "Image built successfully"
             }
         }
@@ -54,7 +56,7 @@ pipeline {
 
         stage("Push to Dockerhub") {
             steps {
-                sh "sudo docker push umman2005/jenkins-project:${env.GIT_COMMIT}"
+                sh "sudo docker push ${env.IMAGE}:${env.TAG}"
                 echo "Image pushed to DockerHub successfully"
             }
         }
@@ -66,10 +68,7 @@ pipeline {
                     gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
                     gcloud container clusters get-credentials dev-cluster --zone "${env.ZONE}" --project "${env.PROJECT_ID}"
                     
-                    kubectl apply -f kubernetes/deployment.yml
-
-                    kubectl set image deployment/${env.DEPLOYMENT} ${env.CONTAINER}=umman2005/${env.IMAGE}:${env.GIT_COMMIT} -n ${env.NAMESPACE}
-                    kubectl delete pods --all -n ${env.NAMESPACE}
+                    envsubst < kubernetes/deployment-temp.yml > kubernetes/deployment.yml
 
                     kubectl apply -f kubernetes/deployment.yml
                     kubectl apply -f kubernetes/service.yml
