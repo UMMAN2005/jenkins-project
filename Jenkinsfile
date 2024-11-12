@@ -21,7 +21,6 @@ pipeline {
 
         stage("Test") {
             steps {
-                // Install pytest on RHEL using yum
                 sh "sudo yum install python3-pytest -y"
                 sh "python3 -m pytest"
                 echo "Test run successfully"
