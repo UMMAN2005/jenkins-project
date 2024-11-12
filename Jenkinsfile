@@ -9,7 +9,7 @@ pipeline {
         NAMESPACE = 'default'
         DEPLOYMENT = 'jenkins-project'
         CONTAINER = 'jenkins-project-container'
-        IMAGE = "34.42.194.195/jenkins/jenkins-project"
+        IMAGE = "${env.HARBOR_DOMAIN}/jenkins/jenkins-project"
         TAG = "${env.GIT_COMMIT}"
     }
 
