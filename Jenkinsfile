@@ -29,7 +29,6 @@ pipeline {
 
         stage("Build docker image") {
             steps {
-                // Build the Docker image
                 sh "sudo docker build -t docker.io/umman2005/jenkins-project:${env.GIT_COMMIT} ."
                 echo "Image built successfully"
             }
