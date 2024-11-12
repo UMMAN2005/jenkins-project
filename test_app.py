@@ -1,5 +1,5 @@
 import pytest
-from app import app as flask_app, tasks  # Import the tasks dictionary
+from app import app as flask_app, tasks
 
 @pytest.fixture
 def app():
