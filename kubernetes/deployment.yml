@@ -3,10 +3,10 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: jenkins-project
-  name: jenkins-project
+    app: jenkins-project-deployment
+  name: jenkins-project-deployment
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: jenkins-project
@@ -18,7 +18,7 @@ spec:
         app: jenkins-project
     spec:
       containers:
-      - image: jenkins-project
+      - image: nginx  # Just default image, pipeline will change it
         name: jenkins-project
         resources: {}
 status: {}
