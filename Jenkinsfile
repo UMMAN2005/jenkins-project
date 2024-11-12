@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        PATH = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/opt/google-cloud-sdk/bin'
         ZONE = 'us-central1'
         PROJECT_ID = 'kubernetes-441414'
         DEPLOYMENT = 'jenkins-project'
@@ -11,6 +12,12 @@ pipeline {
     }
 
     stages {
+        stage('Check Env Path') {
+            steps {
+                sh 'echo $PATH'
+            }
+        }
+
         stage("Install dependencies") {
             steps {
                 sh "sudo yum install python3-pip -y"
