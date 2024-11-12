@@ -20,5 +20,7 @@ spec:
       containers:
       - image: nginx  # Just default image, pipeline will change it
         name: jenkins-project
+        ports: 
+          - containerPort: 80
         resources: {}
 status: {}
