@@ -69,6 +69,8 @@ pipeline {
                     
                     envsubst < kubernetes/deployment-temp.yml > kubernetes/deployment.yml
 
+                    kubectl delete deployment "${env.DEPLOYMENT}"
+
                     kubectl apply -f kubernetes/deployment.yml
                     kubectl apply -f kubernetes/service.yml
                     """
