@@ -69,7 +69,7 @@ pipeline {
                     
                     envsubst < kubernetes/deployment-temp.yml > kubernetes/deployment.yml
 
-                    kubectl delete deployment "${env.DEPLOYMENT}"
+                    kubectl delete deployment "${env.DEPLOYMENT}" --ignore-not-found
 
                     kubectl apply -f kubernetes/deployment.yml
                     kubectl apply -f kubernetes/service.yml
@@ -107,7 +107,7 @@ pipeline {
 
                     envsubst < kubernetes/deployment-temp.yml > kubernetes/deployment.yml
 
-                    kubectl delete deployment "${env.DEPLOYMENT}"
+                    kubectl delete deployment "${env.DEPLOYMENT}" --ignore-not-found
 
                     kubectl apply -f kubernetes/deployment.yml
                     kubectl apply -f kubernetes/service.yml
