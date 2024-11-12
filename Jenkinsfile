@@ -52,23 +52,21 @@ pipeline {
             }
         }
 
-        stage("Deploy to Dev Cluster") {
-            steps {
-                withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                    sh '''
-                    gcloud auth activate-service-account --key-file ${env.GOOGLE_APPLICATION_CREDENTIALS}
-                    gcloud container clusters get-credentials dev-cluster --zone ${env.ZONE} --project ${env.PROJECT_ID}
-                    '''
-
-                    sh '''
-                    kubectl apply -f kubernetes/deployment.yml
-                    kubectl set image deployment/${env.DEPLOYMENT} ${env.CONTAINER}=umman2005/${env.IMAGE}:${env.GIT_COMMIT} -n ${env.NAMESPACE}
-                    kubectl apply -f kubernetes/deployment.yml
-                    kubectl apply -f kubernetes/service.yml
-                    '''
-                    echo "Deployed to Development Cluster successfully"
-                }
-            }
+stage("Deploy to Dev Cluster") {
+    steps {
+        withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+            sh '''
+            gcloud auth activate-service-account --key-file "${env.GOOGLE_APPLICATION_CREDENTIALS}"
+            gcloud container clusters get-credentials dev-cluster --zone "${env.ZONE}" --project "${env.PROJECT_ID}"
+            
+            kubectl set image deployment/${env.DEPLOYMENT} ${env.CONTAINER}=umman2005/${env.IMAGE}:${env.GIT_COMMIT} -n ${env.NAMESPACE}
+            kubectl apply -f kubernetes/deployment.yml
+            kubectl apply -f kubernetes/service.yml
+            '''
+            echo "Deployed to Dev Cluster successfully"
         }
+    }
+}
+
     }
 }
