@@ -3,14 +3,13 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: jenkins-project-deployment
+    app: jenkins-project
   name: jenkins-project-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: jenkins-project
-  strategy: {}
   template:
     metadata:
       creationTimestamp: null
@@ -18,9 +17,14 @@ spec:
         app: jenkins-project
     spec:
       containers:
-      - image: nginx  # Just default image, pipeline will change it
-        name: jenkins-project
+      - name: jenkins-project
+        image: nginx  # Just default image, pipeline will change it
         ports: 
           - containerPort: 80
-        resources: {}
-status: {}
+        resources:
+          limits:
+            cpu: "1"
+            memory: "500Mi"
+          requests:
+            cpu: "0.5"
+            memory: "200Mi"

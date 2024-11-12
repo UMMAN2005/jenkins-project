@@ -67,7 +67,10 @@ pipeline {
                     gcloud container clusters get-credentials dev-cluster --zone "${env.ZONE}" --project "${env.PROJECT_ID}"
                     
                     kubectl apply -f kubernetes/deployment.yml
+
                     kubectl set image deployment/${env.DEPLOYMENT} ${env.CONTAINER}=umman2005/${env.IMAGE}:${env.GIT_COMMIT} -n ${env.NAMESPACE}
+                    kubectl delete pods --all -n ${env.NAMESPACE}
+
                     kubectl apply -f kubernetes/deployment.yml
                     kubectl apply -f kubernetes/service.yml
                     """
