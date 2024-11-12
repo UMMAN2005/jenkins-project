@@ -1,6 +1,15 @@
 pipeline {
     agent any
 
+    environment {
+        ZONE = 'us-central1'
+        PROJECT_ID = 'kubernetes-441414'
+        DEPLOYMENT = 'jenkins-project'
+        CONTAINER = 'jenkins-project'
+        IMAGE = 'jenkins-project'
+        NAMESPACE = 'default'
+    }
+
     stages {
         stage("Install dependencies") {
             steps {
@@ -30,8 +39,6 @@ pipeline {
                                 withCredentials([usernamePassword(credentialsId: 'docker-credentials', 
                                                  usernameVariable: 'DOCKER_USERNAME', 
                                                  passwordVariable: 'DOCKER_PASSWORD')]) {
-                echo "username: ${env.DOCKER_USERNAME}"
-                echo "password: ${env.DOCKER_PASSWORD}"
                 sh "echo ${env.DOCKER_PASSWORD} | docker login -u ${env.DOCKER_USERNAME} --password-stdin"
                 echo "Logged in successfully"
                                                  }
@@ -42,6 +49,24 @@ pipeline {
             steps {
                 sh "sudo docker push umman2005/jenkins-project:${env.GIT_COMMIT}"
                 echo "Image pushed to DockerHub successfully"
+            }
+        }
+
+        stage("Deploy to Dev Cluster") {
+            steps {
+                withCredentials([file(credentialsId: 'gcp-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+                    sh '''
+                    gcloud auth activate-service-account --key-file ${env.GOOGLE_APPLICATION_CREDENTIALS}
+                    gcloud container clusters get-credentials dev-cluster --zone ${env.ZONE} --project ${env.PROJECT_ID}
+                    '''
+
+                    sh '''
+                    kubectl set image deployment/${env.DEPLOYMENT} ${env.CONTAINER}=umman2005/${env.IMAGE}:${env.GIT_COMMIT} -n ${env.NAMESPACE}
+                    kubectl apply -f kubernetes/deployment.yml
+                    kubectl apply -f kubernetes/service.yml
+                    '''
+                    echo "Deployed to Dev Cluster successfully"
+                }
             }
         }
     }
