@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-project
+  template:
+    metadata:
+      labels:
+        app: jenkins-project
+    spec:
+      containers:
+      - name: jenkins-project-container
+        image: umman2005/jenkins-project:f9c426cab9f8a4bc17553d048591709b88e75cb8
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "1"
+            memory: "500Mi"
+          requests:
+            cpu: "0.5"
+            memory: "200Mi"
