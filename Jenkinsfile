@@ -47,7 +47,6 @@ pipeline {
 
         stage("Push to Dockerhub") {
             steps {
-                // Push the image to Docker Hub
                 sh "sudo docker push docker.io/umman2005/jenkins-project:${env.GIT_COMMIT}"
                 echo "Image pushed to DockerHub successfully"
             }
