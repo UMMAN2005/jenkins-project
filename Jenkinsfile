@@ -31,7 +31,7 @@ pipeline {
         stage("Build docker image") {
             steps {
                 // Build the Docker image
-                sh "sudo docker build -t umman2005/jenkins-project:${env.GIT_COMMIT} ."
+                sh "sudo docker build -t docker.io/umman2005/jenkins-project:${env.GIT_COMMIT} ."
                 echo "Image built successfully"
             }
         }
@@ -51,7 +51,7 @@ pipeline {
         stage("Push to Dockerhub") {
             steps {
                 // Push the image to Docker Hub
-                sh "sudo docker push umman2005/jenkins-project:${env.GIT_COMMIT}"
+                sh "sudo docker push docker.io/umman2005/jenkins-project:${env.GIT_COMMIT}"
                 echo "Image pushed to DockerHub successfully"
             }
         }
