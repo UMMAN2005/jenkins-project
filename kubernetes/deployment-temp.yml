@@ -17,7 +17,7 @@ spec:
         image: ${IMAGE}:${TAG}
         volumeMounts:
         - name: harbor-ca-cert
-          mountPath: /etc/ssl/certs/harbor-ca.crt 
+          mountPath: /usr/local/share/ca-certificates/harbor-ca.crt 
           subPath: ca.crt
         ports:
         - containerPort: 80
