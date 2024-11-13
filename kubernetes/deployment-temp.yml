@@ -15,10 +15,6 @@ spec:
       containers:
       - name: ${CONTAINER}
         image: ${IMAGE}:${TAG}
-        volumeMounts:
-        - name: harbor-ca-cert
-          mountPath: /usr/local/share/ca-certificates/harbor-ca.crt 
-          subPath: ca.crt
         ports:
         - containerPort: 80
         resources:
@@ -28,7 +24,3 @@ spec:
           requests:
             cpu: "0.5"
             memory: "200Mi"
-      volumes:
-        - name: harbor-ca-cert
-          secret:
-            secretName: harbor-ca-cert
