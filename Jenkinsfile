@@ -111,7 +111,6 @@ pipeline {
 
                     kubectl apply -f kubernetes/deployment.yml -n "${env.NAMESPACE}"
                     kubectl apply -f kubernetes/service.yml -n "${env.NAMESPACE}"
-                    kubectl apply -f kubernetes/secret.yml -n "${env.NAMESPACE}"
                     """
                     echo "Deployed to Prod Cluster successfully"
                 }
